@@ -1,0 +1,38 @@
+@import 'colors.scss';
+@import 'fonts.scss';
+
+.post-tile-container {
+    width: 100%;
+    border: 1px solid $primary-border-color;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+.post-tile {
+    &__title {
+        font-size: $font-size-large;
+        font-weight: bold;
+        text-align: left;
+    }
+    &__text {
+        text-align: left;
+        margin: 10px 0;
+    }
+
+    &__description {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin: 0 10px;
+
+        &--likes {
+            width: 20%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        span {
+            margin-left: 5px;
+        }
+    }
+}

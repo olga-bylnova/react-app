@@ -1,0 +1,83 @@
+@import 'colors.scss';
+@import 'fonts.scss';
+
+.background-container {
+  background-color: $primary-page-background-color;
+  padding-top: 20px;
+}
+
+.container {
+  background-color: $primary-page-color;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  min-height: 100vh;
+
+  &-container {
+    margin: 0 10%;
+    border-left: 1px solid $primary-border-color;
+    border-right: 1px solid $primary-border-color;
+  }
+
+  &-posts {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 50px;
+    align-items: center;
+  }
+
+  &-navigation {
+    width: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__search {
+      &-icon {
+        padding: 5px;
+      }
+
+      &-form {
+        display: flex;
+      }
+    }
+
+    &__sort {
+      display: flex;
+      margin: 40px 0;
+      align-items: center;
+
+      &-item {
+        margin-left: 20px;
+
+        &-button {
+          &-invisible {
+            visibility: hidden;
+          }
+
+          &-icon {
+            color: #aaa;
+
+            &-active {
+              color: #000;
+              visibility: visible;
+            }
+
+            &-invisible {
+              visibility: hidden;
+            }
+          }
+        }
+      }
+
+      &-label {
+        font-weight: bold;
+      }
+    }
+  }
+}

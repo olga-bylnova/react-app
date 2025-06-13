@@ -1,0 +1,28 @@
+@import 'colors.scss';
+@import 'fonts.scss';
+
+.navbar {
+    &-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+        border-bottom: 1px solid $primary-border-color;
+        line-height: 3.5;
+    }
+
+    &-sections {
+        display: flex;
+
+        &-link {
+            margin: 0 10px;
+        }
+
+        &__name {
+            font-weight: bold;
+        }
+    }
+
+    &-mode-icon {
+        margin-left: 10px;
+    }
+}

@@ -1,0 +1,20 @@
+#root {
+  width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+:root {
+  --primary-border-color: #000;
+  --primary-page-background-color: #ddd;
+  --primary-page-color: #fff;
+  --primary-text-color: #000;
+}
+
+.App.dark {
+  --primary-border-color: #fff;
+  --primary-page-background-color: #eee;
+  --primary-page-color: #121212;
+  --primary-text-color: #fff;
+}

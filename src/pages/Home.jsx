@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import PostTile from "../components/PostTile.jsx";
 import Navbar from "../components/Navbar.jsx";
 import "../css/home.scss";
@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useSearchParams} from "react-router-dom";
 import {searchPosts} from "../services/postService.js";
 import SortButton from "../components/SortButton.jsx";
+import {BeatLoader} from "react-spinners";
 
 function Home() {
     const [posts, setPosts] = useState([]);
@@ -16,20 +17,59 @@ function Home() {
     const [sort, setSort] = useState(searchParams.get("sort") || "");
     const [order, setOrder] = useState(searchParams.get("order") || "");
 
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const observerRef = useRef(null);
+    const isResetRef = useRef(false);
+    const isFirstRender = useRef(true);
+
     useEffect(() => {
-        const fetchPosts = async () => {
+        const loadPosts = async () => {
+            setLoading(true);
             try {
-                const posts = await searchPosts(searchInput, sort, order);
-                setPosts(posts);
+                const newPosts = await searchPosts(searchInput, sort, order, page);
+                if (newPosts.length === 0) {
+                    setHasMore(false);
+                } else {
+                    setPosts(prev => isResetRef.current ? newPosts : [...prev, ...newPosts]);
+                }
             } catch (err) {
-                console.error(err);
+                console.error("Failed to load posts", err);
             } finally {
+                isResetRef.current = false;
                 setLoading(false);
             }
         };
 
-        fetchPosts();
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        loadPosts();
+    }, [page, searchParams]);
+
+    useEffect(() => {
+        setHasMore(true);
+        setPosts([]);
+        setPage(1);
+        isResetRef.current = true;
     }, [searchParams]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && hasMore && !isFirstRender.current) {
+                    setPage(prev => prev + 1);
+                }
+            },
+            {threshold: 1}
+        );
+
+        const target = observerRef.current;
+        if (target) observer.observe(target);
+        return () => target && observer.unobserve(target);
+    }, [observerRef]);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -63,50 +103,49 @@ function Home() {
 
     return (
         <>
-            {loading ? (
-                <div className="loading">Loading...</div>
-            ) : (
-                <div className="background-container">
-                    <div className="container">
-                        <Navbar></Navbar>
-                        <div className="main-content-container">
-                            <div className="main-content">
-                                <div className="main-content-navigation">
-                                    <div className="main-content-navigation__sort">
-                                        <div className="main-content-navigation__sort-label">
-                                            Sorting:
-                                        </div>
-                                        <SortButton sortKey="views" icon={faEye} activeSort={sort} activeOrder={order}
-                                                    onSortChange={handleSortChange}/>
-                                        <SortButton sortKey="likes" icon={faThumbsUp} activeSort={sort}
-                                                    activeOrder={order}
-                                                    onSortChange={handleSortChange}/>
+            <div className="background-container">
+                <div className="container">
+                    <Navbar></Navbar>
+                    <div className="main-content-container">
+                        <div className="main-content">
+                            <div className="main-content-navigation">
+                                <div className="main-content-navigation__sort">
+                                    <div className="main-content-navigation__sort-label">
+                                        Sorting:
                                     </div>
-                                    <div className="main-content-navigation__search">
-                                        <form className="main-content-navigation__search-form"
-                                              onSubmit={(e) => handleSearch(e)}>
-                                            <button type="submit" className="main-content-navigation__search-icon">
-                                                <FontAwesomeIcon icon={faMagnifyingGlass}/>
-                                            </button>
-                                            <input type="text" name="search" placeholder="Search"
-                                                   onChange={(e) => setSearchInput(e.target.value)}
-                                                   value={searchInput}/>
-                                        </form>
-                                    </div>
+                                    <SortButton sortKey="views" icon={faEye} activeSort={sort} activeOrder={order}
+                                                onSortChange={handleSortChange}/>
+                                    <SortButton sortKey="likes" icon={faThumbsUp} activeSort={sort}
+                                                activeOrder={order}
+                                                onSortChange={handleSortChange}/>
                                 </div>
-                                <div className="main-content-posts">
-                                    {(posts.length > 0) ? (
-                                        posts.map((post) => (
-                                            <PostTile post={post} key={post.id}></PostTile>
-                                        ))
-                                    ) : <span className="main-content-posts-not-found">No posts found.</span>
-                                    }
+                                <div className="main-content-navigation__search">
+                                    <form className="main-content-navigation__search-form"
+                                          onSubmit={(e) => handleSearch(e)}>
+                                        <button type="submit" className="main-content-navigation__search-icon">
+                                            <FontAwesomeIcon icon={faMagnifyingGlass}/>
+                                        </button>
+                                        <input type="text" name="search" placeholder="Search"
+                                               onChange={(e) => setSearchInput(e.target.value)}
+                                               value={searchInput}/>
+                                    </form>
                                 </div>
+                            </div>
+                            <div className="main-content-posts">
+                                {(posts.length > 0) ? (
+                                    posts.map((post) => (
+                                        <PostTile post={post} key={post.id}></PostTile>
+                                    ))
+                                ) : (!loading ? <span className="main-content-posts-not-found">No posts found.</span>
+                                    : <BeatLoader/>)
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
+            {loading && <BeatLoader/>}
+            <div ref={observerRef} style={{height: "1px"}}></div>
         </>
     );
 }

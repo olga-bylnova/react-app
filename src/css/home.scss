@@ -1,13 +1,13 @@
-@import 'colors.scss';
 @import 'fonts.scss';
 
 .background-container {
-  background-color: $primary-page-background-color;
+  background-color: var(--primary-page-background-color);
   padding-top: 20px;
 }
 
 .container {
-  background-color: $primary-page-color;
+  background-color: var(--primary-page-color);
+  color: var(--primary-text-color);
 }
 
 .main-content {
@@ -19,8 +19,8 @@
 
   &-container {
     margin: 0 10%;
-    border-left: 1px solid $primary-border-color;
-    border-right: 1px solid $primary-border-color;
+    border-left: 1px solid var(--primary-border-color);
+    border-right: 1px solid var(--primary-border-color);
   }
 
   &-posts {
@@ -64,7 +64,7 @@
             color: #aaa;
 
             &-active {
-              color: #000;
+              color: var(--primary-text-color-color);
               visibility: visible;
             }
 

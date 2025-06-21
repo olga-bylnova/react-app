@@ -1,8 +1,11 @@
 import "../css/navbar.scss";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleHalfStroke} from '@fortawesome/free-solid-svg-icons'
+import {useContext} from "react";
+import {ThemeContext} from "../contexts/ThemeContext.jsx";
 
 function Navbar() {
+    const {toggleTheme} = useContext(ThemeContext);
     return (
         <div className="navbar-container">
             <div className="navbar-sections">
@@ -17,7 +20,9 @@ function Navbar() {
                 </div>
             </div>
             <div className="navbar-mode">
-                Light mode <FontAwesomeIcon className="navbar-mode-icon" icon={faCircleHalfStroke} />
+                <button onClick={toggleTheme}>
+                    Light mode <FontAwesomeIcon className="navbar-mode-icon" icon={faCircleHalfStroke}/>
+                </button>
             </div>
         </div>
     );
